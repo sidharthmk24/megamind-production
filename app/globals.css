@@ -1,26 +1,239 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0c0c0a;
+  --foreground: #f3eee6;
+  --muted: #9b9386;
+  --line: rgba(243, 238, 230, 0.1);
+  --line-strong: rgba(243, 238, 230, 0.2);
+  --panel: rgba(255, 255, 255, 0.04);
+  --accent: #d8a46d;
+  --accent-soft: rgba(216, 164, 109, 0.18);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-syne);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  color-scheme: dark;
+  scroll-behavior: auto;
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-manrope), sans-serif;
+  background:
+    /* radial-gradient(circle at top left, rgba(216, 164, 109, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 18%), */
+    linear-gradient(180deg, #11100d 0%, #0c0c0a 38%, #080806 100%);
+  min-height: 100vh;
+  text-rendering: geometricPrecision;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img,
+video,
+svg {
+  display: block;
+}
+
+html[data-cursor="focus"],
+html[data-cursor="focus"] * {
+  cursor: none !important;
+}
+
+
+
+.section-shell {
+  width: min(100%, 1560px);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 2.7vw, 2rem);
+}
+
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(1rem, 1.8vw, 1.6rem);
+}
+
+.glass-panel {
+  border: 1px solid rgba(243, 238, 230, 0.1);
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(18px);
+}
+
+.service-row {
+  transition:
+    color 220ms ease,
+    background-color 220ms ease,
+    padding-inline 220ms ease;
+}
+
+.service-row:hover,
+.service-row:focus-visible {
+  color: var(--accent);
+  background-color: rgba(255, 255, 255, 0.035);
+  padding-inline: 0.9rem;
+}
+
+.wall-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.03) 46%,
+      transparent 100%);
+  pointer-events: none;
+}
+
+.hero-title-line {
+  line-height: 0.88;
+}
+/* HeroCarousel.module.css */
+
+/* ── Outer shell ───────────────────────────────────────────── */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;           /* full viewport height */
+  overflow: hidden;
+  background: #000;
+  font-family: 'Clash Display', 'Syne', Georgia, serif; /* ← swap to your brand font */
+}
+
+/* ── WebGL canvas fills the hero ───────────────────────────── */
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── Text overlay ───────────────────────────────────────────── */
+.textWrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 6vw 8vh;
+  /* clipping mask — text slides behind this invisible wall */
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sub {
+  margin: 0 0 0.5rem;
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.headline {
+  margin: 0;
+  font-size: clamp(2.4rem, 6.5vw, 7rem);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: #fff;
+  max-width: 14ch;
+}
+
+/* ── Slide indicator dots ───────────────────────────────────── */
+.dots {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 6vw;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+
+.dotActive {
+  background: #fff;
+  border-color: #fff;
+  transform: scale(1.3);
+}
+
+.dot:hover:not(.dotActive) {
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ─── CUSTOM PREMIUM SCROLLBAR ─── */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(243, 238, 230, 0.15);
+  border: 3px solid var(--background);
+  border-radius: 9999px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Firefox compatibility */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(243, 238, 230, 0.15) var(--background);
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }

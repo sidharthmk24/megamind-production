@@ -2,8 +2,8 @@
 
 export default function NotesHero() {
   return (
-    <section className="relative min-h-[65vh] w-full bg-black flex flex-col justify-center items-start px-[40px] ">
-      <h1 className="text-[clamp(4.5rem,12vw,11rem)] font-bold text-start leading-[0.82] text-white tracking-tighter">
+    <section className="relative min-h-[20vh] md:min-h-[65vh] w-full bg-black flex flex-col justify-center items-start pl-[50px] pr-5 md:px-[40px] ">
+      <h1 className="text-4xl md:text-[clamp(4.5rem,12vw,11rem)] font-normal md:font-bold text-start leading-[1.1] md:leading-[0.82] text-white tracking-normal md:tracking-tighter">
         PRODUCTION <br /> NOTES
       </h1>
 

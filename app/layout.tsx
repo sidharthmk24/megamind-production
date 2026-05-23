@@ -32,7 +32,7 @@ export default function RootLayout({
     >
       <body className="selection:bg-[var(--accent)] selection:text-[var(--background)] overflow-x-hidden">
         <LenisProvider>
-          {/* <IntroLoader /> */}
+          <IntroLoader />
           {children}
         </LenisProvider>
       </body>

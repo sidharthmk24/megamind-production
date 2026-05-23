@@ -86,16 +86,10 @@ export default function FooterVideo() {
 
       {/* ─── DESKTOP VIEW OVERLAYS ─── */}
       <div className="hidden md:block">
-        {/*
-          mix-blend-difference + pure white = text color is always the
-          mathematical inverse of the video pixels beneath — fully reactive,
-          no fixed hue.
-        */}
         <div
           className="absolute inset-0 flex flex-col justify-end pb-[4rem] pointer-events-none select-none z-10"
           style={{ mixBlendMode: "difference" }}
         >
-          {/* overflow-hidden is what clips letters that start at y:120% below */}
           <div style={{ overflow: "hidden" }}>
             <h1
               className="text-[14vw] md:text-[9vw] font-semibold tracking-tight leading-none text-center whitespace-nowrap"
@@ -171,60 +165,55 @@ export default function FooterVideo() {
       </div>
 
       {/* ─── MOBILE VIEW OVERLAY ─── */}
-      <div className="md:hidden absolute inset-0 flex flex-col justify-between pt-16 pb-8 px-6 z-20 text-white select-none">
+      <div className="md:hidden absolute inset-0 flex flex-col justify-end items-center pb-12 px-6 z-20 text-white select-none">
         
-        {/* Top: Back to Top Button */}
-        <div className="flex flex-col items-center justify-center pt-8">
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-2 text-[14px] font-light text-white/90 hover:text-white transition-colors tracking-wide cursor-pointer"
+        {/* Back to Top */}
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="flex items-center gap-2 text-[14px] font-light text-white/90 hover:text-white transition-colors tracking-wide cursor-pointer mb-8"
+        >
+          <span className="text-[15px]">↑</span> Back to Top
+        </button>
+
+        {/* Social Links */}
+        <div className="flex justify-center gap-6 text-[14px] font-light text-white/80 mb-6 w-full">
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-white transition-colors"
           >
-            <span className="text-[15px]">↑</span> Back to Top
-          </button>
+            Instagram
+          </a>
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-white transition-colors"
+          >
+            Facebook
+          </a>
+          <a
+            href="https://youtube.com"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-white transition-colors"
+          >
+            YouTube
+          </a>
         </div>
 
-        {/* Center/Lower: Social Links + Giant Title */}
-        <div className="flex flex-col items-center gap-8 w-full">
-          {/* Social Links */}
-          <div className="flex justify-center gap-8 text-[14px] font-light text-white/80">
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              Instagram
-            </a>
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              Facebook
-            </a>
-            <a
-              href="https://youtube.com"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              YouTube
-            </a>
-          </div>
-
-          {/* Giant Title (Megamind Productions in 2 lines with Difference Blend) */}
-          <div 
-            className="w-full flex justify-center text-center select-none"
-            style={{ mixBlendMode: "difference" }}
-          >
-            <h1 className="text-[12vw] font-bold tracking-tight leading-[1.05] text-center text-white uppercase whitespace-pre-wrap">
-              Megamind{"\n"}Productions
-            </h1>
-          </div>
+        {/* Giant Title */}
+        <div 
+          className="w-full flex justify-center text-center select-none mb-8"
+          style={{ mixBlendMode: "difference" }}
+        >
+          <h1 className="text-[16vw] font-normal tracking-tight leading-[0.95] text-center text-white whitespace-pre-wrap">
+            Megamind{"\n"}Productions
+          </h1>
         </div>
 
-        {/* Bottom: Legal Link */}
+        {/* Legal Link */}
         <div className="flex justify-center items-center">
           <a
             href="/legal"

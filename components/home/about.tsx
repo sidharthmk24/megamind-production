@@ -19,6 +19,17 @@ const Node = ({ className, style }: { className?: string; style?: React.CSSPrope
 export default function About() {
   const aboutRef = useRef<HTMLElement | null>(null);
   const progressBarRef = useRef<HTMLDivElement | null>(null);
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const detailsRef = useRef<HTMLDivElement | null>(null);
+  const isoTextRef = useRef<HTMLSpanElement | null>(null);
+
+  const splitText = (text: string) => {
+    return text.split("").map((ch, i) => (
+      <span key={i} className="svc-char inline-block whitespace-pre opacity-0 will-change-opacity">
+        {ch === " " ? "\u00a0" : ch}
+      </span>
+    ));
+  };
 
   useGSAP(
     () => {
@@ -33,6 +44,62 @@ export default function About() {
           start: "top 75%",
         },
       });
+
+      // Character flicker intro animation for the main heading
+      const charEls = headingRef.current?.querySelectorAll(".svc-char");
+      if (charEls && charEls.length > 0) {
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: headingRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        })
+        .to(charEls, {
+          opacity: 1,
+          duration: 0.03,
+          stagger: { amount: 0.35, from: "random" },
+          ease: "none",
+        })
+        .to(charEls, {
+          opacity: 0,
+          duration: 0.03,
+          stagger: { amount: 0.15, from: "random" },
+          ease: "none",
+        }, "-=0.1")
+        .to(charEls, {
+          opacity: 1,
+          duration: 0.03,
+          stagger: { amount: 0.25, from: "random" },
+          ease: "none",
+        }, "-=0.08");
+      }
+
+      // Classy fade-up + soft blur stagger for details block
+      const detailItems = detailsRef.current?.children;
+      if (detailItems && detailItems.length > 0) {
+        gsap.fromTo(
+          detailItems,
+          {
+            opacity: 0,
+            y: 25,
+            filter: "blur(6px)",
+          },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 1.2,
+            stagger: 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: detailsRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
 
       gsap.utils
         .toArray<HTMLElement>("[data-parallax]")
@@ -64,6 +131,25 @@ export default function About() {
             },
           }
         );
+      }
+
+      if (isoTextRef.current) {
+        const counter = { value: 1 };
+        gsap.to(counter, {
+          value: 200,
+          ease: "none",
+          scrollTrigger: {
+            trigger: aboutRef.current,
+            start: "top 60%",
+            end: "bottom 40%",
+            scrub: true,
+          },
+          onUpdate: () => {
+            if (isoTextRef.current) {
+              isoTextRef.current.innerText = `ISO : ${Math.round(counter.value)}`;
+            }
+          },
+        });
       }
     },
     { scope: aboutRef }
@@ -98,14 +184,21 @@ export default function About() {
                 Who we are
               </p>
               <h2
+                ref={headingRef}
                 className="font-light text-2xl md:text-3xl lg:text-5xl leading-[1.3] md:leading-[1.05] tracking-tight text-white/95"
-                data-about-copy
               >
-                We’re the production<br className="md:hidden" />
-                <span className="hidden md:inline"> </span>house that turns brand<br className="md:hidden" />
-                <span className="hidden md:inline"> </span>visions into compelling<br className="md:hidden" />
-                <span className="hidden md:inline"> </span>visual stories, crafted with
-                <span className="hidden md:inline"> </span>precision in every detail.
+                {splitText("We’re the production")}
+                <br className="md:hidden" />
+                <span className="hidden md:inline"> </span>
+                {splitText("house that turns brand")}
+                <br className="md:hidden" />
+                <span className="hidden md:inline"> </span>
+                {splitText("visions into compelling")}
+                <br className="md:hidden" />
+                <span className="hidden md:inline"> </span>
+                {splitText("visual stories, crafted with")}
+                <span className="hidden md:inline"> </span>
+                {splitText("precision in every detail.")}
               </h2>
             </div>
 
@@ -180,22 +273,22 @@ export default function About() {
 
             {/* Text Content — tight spacing as in photo */}
             <div
+              ref={detailsRef}
               className="text-[13px] md:text-[14px] leading-[1.5] md:leading-[1.65] text-white/70 md:text-white/55 font-light space-y-4 md:space-y-5"
-              data-about-copy
             >
-              <p>
+              <p className="opacity-0 filter blur-[4px] will-change-transform will-change-opacity">
                 Built to help brands communicate with clarity, impact, and purpose, Megamind Productions creates films, photography, and digital content for businesses across South India.
               </p>
-              <p>
+              <p className="opacity-0 filter blur-[4px] will-change-transform will-change-opacity">
                 One production partner, multiple disciplines:
               </p>
-              <div>
+              <div className="opacity-0 filter blur-[4px] will-change-transform will-change-opacity">
                 <p className="font-semibold text-white/95 mb-0.5 text-[13px] md:text-[14px]">Visual production services</p>
                 <p>
                   Brand films, ad campaigns, corporate videos, photography, and podcast production for hospitality brands, corporates, institutions, and growing businesses.
                 </p>
               </div>
-              <div>
+              <div className="opacity-0 filter blur-[4px] will-change-transform will-change-opacity">
                 <p className="font-semibold text-white/95 mb-0.5 text-[13px] md:text-[14px]">Strategic visual storytelling</p>
                 <p>
                   Content designed to strengthen brand perception, build trust, and create meaningful connections across digital platforms.
@@ -210,8 +303,11 @@ export default function About() {
             >
               {/* ISO label + thin progress bar */}
               <div className="flex items-center gap-2.5">
-                <span className="text-[8.5px] uppercase tracking-[0.22em] text-white/35 font-light">
-                  ISO : 200
+                <span
+                  ref={isoTextRef}
+                  className="text-[8.5px] uppercase tracking-[0.22em] text-white/35 font-light"
+                >
+                  ISO : 1
                 </span>
                 {/* Track */}
                 <div className="relative w-[126px] h-[13px] flex items-center">

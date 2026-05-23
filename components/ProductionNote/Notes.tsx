@@ -28,13 +28,15 @@ interface NoteCardProps {
 }
 
 function NoteCard({ note, orientation }: NoteCardProps) {
+  const isGrey = note.type === "grey" || note.color === "grey";
+
   // If layout is gradient, render the full-image style
   if (note.layout === "gradient") {
     return (
       <Link href={`/production-note/${note.slug}`} className="note-card-wrapper group block relative border-b border-white/10 last:border-b-0 h-[90vh]">
         
         {/* Full Image background */}
-        <div className="absolute inset-0 grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700 overflow-hidden">
+        <div className={`absolute inset-0 transition-all duration-700 overflow-hidden ${isGrey ? "grayscale brightness-75" : "brightness-90"}`}>
           <img
             src={note.image}
             alt={note.title}
@@ -64,7 +66,7 @@ function NoteCard({ note, orientation }: NoteCardProps) {
   );
 
   const ImageContent = (
-    <div className="note-card-image relative h-[58vh] overflow-hidden grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700">
+    <div className={`note-card-image relative h-[58vh] overflow-hidden transition-all duration-700 ${isGrey ? "grayscale brightness-75" : "brightness-90"}`}>
       <img
         src={note.image}
         alt={note.title}
@@ -111,8 +113,53 @@ export default function Notes() {
 
   return (
     <section className="relative bg-black w-full pb-32">
-      <div className="max-w-full mx-auto px-[40px]">
-        <div className="relative grid grid-cols-1 md:grid-cols-3 border-l border-white/10 border-r border-white/10 border-t border-white/10">
+      <div className="max-w-full mx-auto pl-[50px] pr-4 md:px-[40px]">
+        
+        {/* Mobile Layout */}
+        <div className="md:hidden flex flex-col border-l border-r border-white/10 relative gap-[40px]">
+          {shown.map((note) => (
+            <Link 
+              key={note.id} 
+              href={`/production-note/${note.slug}`}
+              className="flex flex-col relative"
+            >
+              {/* Extended Top Line */}
+              <div className="absolute top-0 left-[-50px] right-0 h-px bg-white/10 z-10" />
+              {/* Extended Bottom Line */}
+              <div className="absolute bottom-0 left-[-50px] right-0 h-px bg-white/10 z-10" />
+
+              {/* Top Left dot */}
+              <div className="absolute top-[-3px] left-[-3px] w-1.5 h-1.5 bg-white z-20" />
+              {/* Top Right dot */}
+              <div className="absolute top-[-3px] right-[-3px] w-1.5 h-1.5 bg-white z-20" />
+              {/* Bottom Left dot */}
+              <div className="absolute bottom-[-3px] left-[-3px] w-1.5 h-1.5 bg-white z-20" />
+              {/* Bottom Right dot */}
+              <div className="absolute bottom-[-3px] right-[-3px] w-1.5 h-1.5 bg-white z-20" />
+              
+              <div className="px-5 pt-8 pb-6">
+                <span className="text-[12px] text-white/50 mb-3 block font-sans tracking-wide">
+                  {note.tag}
+                </span>
+                <h3 className="text-[26px] font-normal leading-[1.25] text-white mb-0 font-display tracking-tight pr-4">
+                  {note.title}
+                </h3>
+              </div>
+              <div className="w-full px-5">
+                <div className={`relative w-full aspect-[4/3] overflow-hidden ${note.type === "grey" || note.color === "grey" ? "grayscale brightness-75" : "brightness-90"}`}>
+                  <img
+                    src={note.image}
+                    alt={note.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:grid relative grid-cols-3 border-l border-white/10 border-r border-white/10 border-t border-white/10">
           
           <div className="absolute top-[-3px] left-[33.333%] w-1.5 h-1.5 bg-white -translate-x-1/2 z-20" />
           <div className="absolute top-[-3px] left-[66.666%] w-1.5 h-1.5 bg-white -translate-x-1/2 z-20" />
@@ -136,22 +183,27 @@ export default function Notes() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center py-2 relative border-l border-r border-t border-white/10 border-b border-white/10 hover:bg-white/10 cursor-pointer transition-all duration-300">
-          <div className="absolute top-[-3px] left-[66.666%] w-1.5 h-1.5 bg-white -translate-x-1/2 z-20" />
-          <div className="absolute top-[-3px] right-0 w-1.5 h-1.5 bg-white translate-x-1/2 z-20" />
+        <div className="flex flex-col items-center justify-center py-2 relative border-l border-r md:border-t md:border-b border-white/10 hover:bg-white/10 cursor-pointer transition-all duration-300">
+          {/* Extended Top and Bottom Lines for Mobile, normal for Desktop via borders */}
+          <div className="md:hidden absolute top-0 left-[-50px] right-0 h-px bg-white/10 z-10" />
+          <div className="md:hidden absolute bottom-0 left-[-50px] right-0 h-px bg-white/10 z-10" />
+
+          <div className="hidden md:block absolute top-[-3px] left-[66.666%] w-1.5 h-1.5 bg-white -translate-x-1/2 z-20" />
+          {/* <div className="absolute top-[-3px] left-[-3px] w-1.5 h-1.5 bg-white z-20" /> */}
+          <div className="absolute top-[-3px] right-[-3px] w-1.5 h-1.5 bg-white z-20" />
           
-          <div className="absolute bottom-[-3px] left-0 w-1.5 h-1.5 bg-white -translate-x-1/2 z-20" />
-          <div className="absolute bottom-[-3px] right-0 w-1.5 h-1.5 bg-white translate-x-1/2 z-20" />
+          <div className="absolute bottom-[-3px] left-[-3px] w-1.5 h-1.5 bg-white z-20" />
+          <div className="absolute bottom-[-3px] right-[-3px] w-1.5 h-1.5 bg-white z-20" />
 
           {visible < NOTES.length ? (
             <button 
-              onClick={() => setVisible(v => v + 3)}
-              className="text-white hover:text-white text-[13px]  transition-colors py-4 px-12"
+              onClick={() => setVisible(NOTES.length)}
+              className="text-white hover:text-white text-[13px]  transition-colors py-2 md:py-4 px-12"
             >
               Load More
             </button>
           ) : (
-            <span className="text-white hover:text-white text-[13px]  transition-colors py-4 px-12">End of Notes</span>
+            <span className="text-white hover:text-white text-[13px]  transition-colors py-2 md:py-4 px-12">End of Notes</span>
           )}
         </div>
       </div>

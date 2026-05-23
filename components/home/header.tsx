@@ -4,6 +4,7 @@ import { useState } from "react";
 import EncryptText from "@/components/home/encrypt-text";
 import Image from "next/image";
 import Link from "next/link";
+import DigitalMobileMenu from "@/components/home/digital-mobile-menu";
 
 // Split navigation to match the left/right alignment in the reference image
 const leftNavigation = [
@@ -66,9 +67,6 @@ export default function Header() {
           <Link href="/" aria-label="Home" className="flex items-center justify-center">
             <Image src="/svgs/logo.svg" alt="Logo" width={24} height={24} className="brightness-0 invert opacity-90" />
           </Link>
-          
-          {/* Intersection dot at bottom-right corner of the logo container */}
-          <div className="absolute bottom-0 -right-0 translate-x-1/2 translate-y-1/2 w-[5px] h-[5px] bg-white z-20" />
         </div>
 
         {/* Right: Menu Trigger */}
@@ -83,62 +81,7 @@ export default function Header() {
       </div>
 
       {/* ─── MOBILE MENU OVERLAY ─── */}
-      {isMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-[70] bg-black/40 backdrop-blur-sm flex items-center justify-center">
-          {/* Card Modal */}
-          <div className="absolute top-[120px] bottom-[100px] left-[40px] right-[40px] bg-black border border-white/10 p-8 flex flex-col z-[80] shadow-2xl">
-            {/* Close Button */}
-            <button
-              onClick={() => setIsMenuOpen(false)}
-              className="text-[12px] text-white/40 hover:text-white font-light tracking-[0.2em] uppercase text-left mb-10 cursor-pointer w-fit"
-            >
-              Close
-            </button>
-
-            {/* Menu Title */}
-            <h3 className="text-4xl font-light text-white mb-10 tracking-tight">Menu</h3>
-
-            {/* Nav Stack */}
-            <nav className="flex flex-col gap-6 text-[18px] font-light text-white/75">
-              <Link
-                href="/featured-projects"
-                onClick={() => setIsMenuOpen(false)}
-                className="hover:text-white transition-colors"
-              >
-                Featured Projects
-              </Link>
-              <Link
-                href="/#services"
-                onClick={() => setIsMenuOpen(false)}
-                className="hover:text-white transition-colors"
-              >
-                Our Services
-              </Link>
-              <Link
-                href="/production-note"
-                onClick={() => setIsMenuOpen(false)}
-                className="hover:text-white transition-colors"
-              >
-                Production Notes
-              </Link>
-              <Link
-                href="/#about"
-                onClick={() => setIsMenuOpen(false)}
-                className="hover:text-white transition-colors"
-              >
-                About
-              </Link>
-              <Link
-                href="/#contact"
-                onClick={() => setIsMenuOpen(false)}
-                className="hover:text-white transition-colors"
-              >
-                Contact
-              </Link>
-            </nav>
-          </div>
-        </div>
-      )}
+      <DigitalMobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </header>
   );
 }

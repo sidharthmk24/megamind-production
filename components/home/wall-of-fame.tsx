@@ -100,9 +100,21 @@ const LogoCellMobile = ({ partner, col, row }: { partner: typeof partners[0]; co
 
 export default function WallOfFame() {
   const wallRef = useRef<HTMLElement | null>(null);
+  const wallHeading1Ref = useRef<HTMLHeadingElement | null>(null);
+  const wallHeading2Ref = useRef<HTMLHeadingElement | null>(null);
+  const wallHeadingMobileRef = useRef<HTMLHeadingElement | null>(null);
+
+  const splitText = (text: string) => {
+    return text.split("").map((ch, i) => (
+      <span key={i} className="svc-char inline-block whitespace-pre will-change-opacity">
+        {ch === " " ? "\u00a0" : ch}
+      </span>
+    ));
+  };
 
   useGSAP(
     () => {
+      // Fade and slide up logos
       gsap.from("[data-wall-fade]", {
         opacity: 0,
         y: 40,
@@ -114,6 +126,39 @@ export default function WallOfFame() {
           start: "top 75%",
         },
       });
+
+      // Character flicker intro animation for Wall of Fame headings (Desktop & Mobile)
+      const desktopChars1 = wallHeading1Ref.current?.querySelectorAll(".svc-char");
+      const desktopChars2 = wallHeading2Ref.current?.querySelectorAll(".svc-char");
+      const mobileChars = wallHeadingMobileRef.current?.querySelectorAll(".svc-char");
+
+      const allHeadingChars = [
+        ...(desktopChars1 ? Array.from(desktopChars1) : []),
+        ...(desktopChars2 ? Array.from(desktopChars2) : []),
+        ...(mobileChars ? Array.from(mobileChars) : []),
+      ];
+
+      if (allHeadingChars.length > 0) {
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: wallRef.current,
+            start: "top 75%",
+            toggleActions: "play none none none",
+          },
+        })
+        .to(allHeadingChars, {
+          opacity: 0,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        })
+        .to(allHeadingChars, {
+          opacity: 1,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        }, "-=0.15");
+      }
     },
     { scope: wallRef }
   );
@@ -141,6 +186,18 @@ export default function WallOfFame() {
             style={{ top: rowPercent(i) }}
           />
         ))}
+
+        {/* Left End Vertical Line (Full Height) */}
+        <div
+          className="absolute w-[1px] bg-white/20 pointer-events-none -translate-x-1/2"
+          style={{ left: colPercent(0), top: "-40px", bottom: "-40px" }}
+        />
+
+        {/* Right End Vertical Line (Full Height) */}
+        <div
+          className="absolute w-[1px] bg-white/20 pointer-events-none -translate-x-1/2"
+          style={{ left: colPercent(6), top: "-40px", bottom: "-40px" }}
+        />
 
         {/* Center Vertical Line (Full Height) */}
         <div
@@ -222,10 +279,10 @@ export default function WallOfFame() {
           style={{ left: 0, top: 0, width: "50%", height: "calc(100% / 5)" }}
         >
           <h2
-            className="text-[clamp(3rem,6vw,7rem)] font-light tracking-tight text-white"
-            data-wall-fade
+            ref={wallHeading1Ref}
+            className="text-[clamp(3rem,6vw,7rem)] font-medium tracking-tight text-white"
           >
-            OUR WALL
+            {splitText("OUR WALL")}
           </h2>
         </div>
         <LogoCell partner={partners[0]} col={3} row={0} />
@@ -246,10 +303,10 @@ export default function WallOfFame() {
           }}
         >
           <h2
-            className="text-[clamp(3rem,6vw,7rem)] font-light tracking-tight text-white"
-            data-wall-fade
+            ref={wallHeading2Ref}
+            className="text-[clamp(3rem,6vw,7rem)] font-medium tracking-tight text-white"
           >
-            OF F(R)AME
+            {splitText("OF F(R)AME")}
           </h2>
         </div>
 
@@ -266,15 +323,21 @@ export default function WallOfFame() {
       {/* =========================================
           MOBILE VIEW (Responsive Grid Layout)
           ========================================= */}
-      <div className="md:hidden absolute top-[40px] bottom-[40px] left-[50px] right-[40px]">
+      <div className="md:hidden absolute top-0 bottom-[40px] left-[50px] right-[40px]">
         {/* Horizontal Lines (Rows 0-4) */}
         {[0, 1, 2, 3, 4].map((i) => (
           <div
             key={`m-h-${i}`}
-            className="absolute h-[1px] w-[100vw] left-[-40px] -translate-y-1/2 bg-white/20 pointer-events-none"
+            className="absolute h-[1px] w-[100vw] left-[-50px] -translate-y-1/2 bg-white/20 pointer-events-none"
             style={{ top: mobRowPercent(i) }}
           />
         ))}
+
+        {/* Leftmost Vertical Line (Full Height) */}
+        <div
+          className="absolute w-[1px] bg-white/20 pointer-events-none -translate-x-1/2"
+          style={{ left: mobColPercent(0), top: "0px", bottom: "0px" }}
+        />
 
         {/* Inner Vertical Lines (Rows 1-4) */}
         {[1, 2].map((i) => (
@@ -285,15 +348,15 @@ export default function WallOfFame() {
           />
         ))}
 
-        {/* Rightmost Vertical Line */}
+        {/* Rightmost Vertical Line (Bottom Grid Only, top starts at 25%) */}
         <div
           className="absolute w-[1px] bg-white/20 pointer-events-none -translate-x-1/2"
-          style={{ left: mobColPercent(3), top: "0px", bottom: "0px" }}
+          style={{ left: mobColPercent(3), top: "25%", bottom: "0px" }}
         />
 
         {/* Top Nodes (Row 0) */}
         <MobileNode col={0} row={0} />
-        <MobileNode col={3} row={0} />
+        {/* <MobileNode col={3} row={0} /> */}
 
         {/* Other Nodes (Rows 1-4) */}
         {[1, 2, 3, 4].map((row) => (
@@ -305,10 +368,12 @@ export default function WallOfFame() {
         {/* Title Block */}
         <div className="absolute top-0 left-0 w-full h-[25%] flex flex-col justify-center px-4">
           <h2
+            ref={wallHeadingMobileRef}
             className="text-[2.2rem] font-light leading-[1.05] tracking-tight text-white uppercase"
-            data-wall-fade
           >
-            OUR WALL<br />OF F(R)AME
+            {splitText("OUR WALL")}
+            <br />
+            {splitText("OF F(R)AME")}
           </h2>
         </div>
 

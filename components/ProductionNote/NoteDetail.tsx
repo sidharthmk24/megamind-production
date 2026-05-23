@@ -38,7 +38,7 @@ export default function NoteDetail({ note, related }: Props) {
       <main className="relative pt-0">
         {/* Article Section */}
      <div className="bg-black w-full text-white font-sans selection:bg-white/20">
-  <div className="max-w-[1440px] mx-auto px-6 md:px-[40px] lg:px-[60px] py-20">
+  <div className="max-w-[1440px] mx-auto px-4 md:px-[40px] lg:px-[60px] py-12">
     
     {/* Grid Container */}
     <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr] gap-12 md:gap-20 lg:gap-28 md:items-stretch items-start">
@@ -115,12 +115,16 @@ export default function NoteDetail({ note, related }: Props) {
 
         {/* More Section */}
         <section className="mt-0 pb-32">
-          <div className="px-[40px]">
-            <h2 className="text-[clamp(24px,2.5vw,32px)] font-medium text-white mb-10 tracking-tight">
-              More from Megamind Productions
+          <div className="px-4 md:px-[40px] mb-10">
+            <h2 className="text-[clamp(24px,2.5vw,32px)] font-medium text-white tracking-tight text-center md:text-left">
+              More from <br className="md:hidden block" /> Megamind Productions
             </h2>
+          </div>
+          
+          <div className=" px-4 md:px-[40px]">
             
-            <div className="relative border-l border-t border-white/10 grid grid-cols-1 md:grid-cols-3 bg-black">
+            {/* Desktop Grid Layout */}
+            <div className="hidden md:grid relative border-l border-t border-white/10 grid-cols-3 bg-black">
               {/* Top edge corner dots */}
               <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none" style={{ left: "0%", top: "0%" }} />
               <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none" style={{ left: "33.333%", top: "0%" }} />
@@ -135,28 +139,21 @@ export default function NoteDetail({ note, related }: Props) {
 
               {related.map((r, idx) => {
                 const isUpsideDown = idx === 0; // Card 1 is upside down, Cards 2 & 3 are normal
+                const isGrey = r.type === "grey" || r.color === "grey";
                 
                 const ImageBlock = (
-                  <div className="aspect-[16/10] overflow-hidden grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-500">
+                  <div className={`aspect-[16/10] overflow-hidden transition-all duration-500 ${isGrey ? "grayscale brightness-75" : "brightness-90"}`}>
                     <img src={r.image} alt={r.title} className="w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-700" />
                   </div>
                 );
 
                 const TextBlock = isUpsideDown ? (
                   <div className="pt-6 pb-12 px-6 border-b border-white/10 bg-black relative flex flex-col justify-start min-h-[150px]">
-                    {/* Middle dots at intersection of text & image (bottom-edge of text container) */}
-                    {/* <div className="absolute bottom-0 left-0 w-[5px] h-[5px] bg-white -translate-x-1/2 translate-y-1/2 z-20 pointer-events-none" />
-                    <div className="absolute bottom-0 right-0 w-[5px] h-[5px] bg-white translate-x-1/2 translate-y-1/2 z-20 pointer-events-none" /> */}
-                    
                     <span className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-3 block">{r.tag || "SHOT"}</span>
                     <h3 className="text-[15px] md:text-[16px] font-light leading-snug text-white/90 group-hover:text-white transition-colors">{r.title}</h3>
                   </div>
                 ) : (
-                  <div className="pt-6 pb-12 px-6  bg-black relative flex flex-col justify-start min-h-[150px]">
-                    {/* Middle dots at intersection of image & text (top-edge of text container) */}
-                    {/* <div className="absolute top-0 left-0 w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" />
-                    <div className="absolute top-0 right-0 w-[5px] h-[5px] bg-white translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" /> */}
-                    
+                  <div className="pt-6 pb-12 px-6 bg-black relative flex flex-col justify-start min-h-[150px]">
                     <span className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-3 block">{r.tag || "SHOT"}</span>
                     <h3 className="text-[15px] md:text-[16px] font-light leading-snug text-white/90 group-hover:text-white transition-colors">{r.title}</h3>
                   </div>
@@ -179,23 +176,106 @@ export default function NoteDetail({ note, related }: Props) {
                 );
               })}
             </div>
-            
-            <div className="flex flex-col items-center justify-center py-2 relative border-l border-r border-t border-white/10 border-b border-white/10 hover:bg-white/10 cursor-pointer transition-all duration-300">
-                     
-                     <div className="absolute bottom-[-3px] left-0 w-1.5 h-1.5 bg-white -translate-x-1/2 z-20" />
-                     <div className="absolute bottom-[-3px] right-0 w-1.5 h-1.5 bg-white translate-x-1/2 z-20" />
-           
-                     {visible < NOTES.length ? (
-                       <button 
-                         onClick={() => setVisible(v => v + 3)}
-                         className="text-white hover:text-white text-[13px]  transition-colors py-4 px-12"
-                       >
-                         Load More
-                       </button>
-                     ) : (
-                       <span className="text-white hover:text-white text-[13px]  transition-colors py-4 px-12 ">End of Notes</span>
-                     )}
-                   </div>
+
+            {/* Mobile Grid Layout */}
+            <div className="md:hidden flex flex-col relative bg-black gap-[16px]">
+              {related.map((r, idx) => {
+                const isUpsideDown = idx === 0; // Card 1 is upside down (text first), Cards 2 & 3 are normal (image first)
+                const isGrey = r.type === "grey" || r.color === "grey";
+
+                const ImageBlock = (
+                  <div className={`aspect-[16/10] overflow-hidden transition-all duration-500 ${isGrey ? "grayscale brightness-75" : "brightness-90"}`}>
+                    <img src={r.image} alt={r.title} className="w-full h-full object-cover transform group-hover:scale-[1.03] transition-transform duration-700" />
+                  </div>
+                );
+
+                const TextBlock = (
+                  <div className="pt-6 pb-12 px-6 bg-black relative flex flex-col justify-start min-h-[150px]">
+                    <span className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-3 block">{r.tag || "SHOT"}</span>
+                    <h3 className="text-[15px] font-light leading-snug text-white/90 group-hover:text-white transition-colors">{r.title}</h3>
+                  </div>
+                );
+
+                return (
+                  <Link 
+                    href={`/production-note/${r.slug}`} 
+                    key={r.id} 
+                    className="group relative block bg-black border-l border-r border-white/10 animate-fadeIn"
+                  >
+                    {/* Extended Top Line */}
+                    <div className="absolute top-0 left-[-16px] right-[-16px] h-px bg-white/10 z-10" />
+                    {/* Top Left dot */}
+                    <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{ left: "0%", top: "0%" }} />
+                    {/* Top Right dot */}
+                    <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{ left: "100%", top: "0%" }} />
+
+                    {/* Extended Bottom Line */}
+                    <div className="absolute bottom-0 left-[-16px] right-[-16px] h-px bg-white/10 z-10" />
+                    {/* Bottom Left dot */}
+                    <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{ left: "0%", top: "100%" }} />
+                    {/* Bottom Right dot */}
+                    <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{ left: "100%", top: "100%" }} />
+
+                    {isUpsideDown ? (
+                      <>
+                        {TextBlock}
+                        {ImageBlock}
+                      </>
+                    ) : (
+                      <>
+                        {ImageBlock}
+                        {TextBlock}
+                      </>
+                    )}
+                  </Link>
+                );
+              })}
+
+              {/* Mobile Load More Button */}
+              <div className="flex flex-col items-center justify-center py-2 relative hover:bg-white/10 cursor-pointer transition-all duration-300 bg-black border-l border-r border-white/10">
+                {/* Top separator line extending to the left edge */}
+                <div className="absolute top-0 left-[-16px] right-[-16px] h-px bg-white/10 z-10" />
+                {/* Top Left dot */}
+                <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{ left: "0%", top: "0%" }} />
+                {/* Top Right dot */}
+                <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{ left: "100%", top: "0%" }} />
+
+                {/* Bottom separator line extending to the left edge */}
+                <div className="absolute bottom-0 left-[-16px] right-[-16px] h-px bg-white/10 z-10" />
+                {/* Bottom Left dot */}
+                <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{ left: "0%", top: "100%" }} />
+                {/* Bottom Right dot */}
+                <div className="absolute w-[5px] h-[5px] bg-white -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none" style={{ left: "100%", top: "100%" }} />
+
+                {visible < NOTES.length ? (
+                  <button 
+                    onClick={() => setVisible(NOTES.length)}
+                    className="text-white hover:text-white text-[13px] transition-colors py-4 px-12"
+                  >
+                    Load More
+                  </button>
+                ) : (
+                  <span className="text-white hover:text-white text-[13px] transition-colors py-4 px-12">End of Notes</span>
+                )}
+              </div>
+            </div>
+
+            {/* Desktop Load More Button */}
+            <div className="hidden md:flex flex-col items-center justify-center py-2 relative border-l border-r border-t border-white/10 border-b border-white/10 hover:bg-white/10 cursor-pointer transition-all duration-300 bg-black">
+              <div className="absolute bottom-[-3px] left-0 w-1.5 h-1.5 bg-white -translate-x-1/2 z-20" />
+              <div className="absolute bottom-[-3px] right-0 w-1.5 h-1.5 bg-white translate-x-1/2 z-20" />
+    
+              {visible < NOTES.length ? (
+                <button 
+                  onClick={() => setVisible(NOTES.length)}
+                  className="text-white hover:text-white text-[13px] transition-colors py-4 px-12"
+                >
+                  Load More
+                </button>
+              ) : (
+                <span className="text-white hover:text-white text-[13px] transition-colors py-4 px-12">End of Notes</span>
+              )}
+            </div>
           </div>
         </section>
       </main>

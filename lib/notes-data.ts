@@ -10,6 +10,7 @@ export interface Note {
   body: NoteSection[];
   layout?: "default" | "gradient";
   color?: "grey" | "color";
+  type?: "grey" | "color";
 }
 
 export interface NoteSection {
@@ -32,6 +33,7 @@ export const NOTES: Note[] = [
     readTime: "4 min read",
     layout: "default",
     color: "color",
+    type: "color",
     body: [
       {
         type: "paragraph",
@@ -101,6 +103,7 @@ export const NOTES: Note[] = [
     readTime: "5 min read",
     layout: "gradient",
     color: "grey",
+    type: "grey",
     body: [
       {
         type: "paragraph",
@@ -184,6 +187,7 @@ export const NOTES: Note[] = [
     readTime: "3 min read",
     layout: "default",
     color: "color",
+    type: "color",
     body: [
       {
         type: "paragraph",
@@ -223,6 +227,7 @@ export const NOTES: Note[] = [
     readTime: "6 min read",
     layout: "default",
     color: "grey",
+    type: "grey",
     body: [
       {
         type: "paragraph",
@@ -262,6 +267,7 @@ export const NOTES: Note[] = [
     readTime: "4 min read",
     layout: "gradient",
     color: "color",
+    type: "color",
     body: [
       {
         type: "paragraph",
@@ -301,6 +307,7 @@ export const NOTES: Note[] = [
     readTime: "3 min read",
     layout: "gradient",
     color: "grey",
+    type: "grey",
     body: [
       {
         type: "paragraph",
@@ -339,6 +346,8 @@ export const NOTES: Note[] = [
     date: "May 2026",
     readTime: "4 min read",
     layout: "default",
+    color: "color",
+    type: "color",
     body: [
       {
         type: "paragraph",

@@ -36,14 +36,47 @@ function ServiceItem({ title }: { title: string }) {
   const textRef = useRef<HTMLSpanElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const scrollTlRef = useRef<gsap.core.Timeline | null>(null);
 
   const characters = title.split("");
 
   useGSAP(
     () => {
+      const charElements = textRef.current?.querySelectorAll(".char");
+
+      // Character split-text flicker intro animation when scrolled into view
+      if (charElements && charElements.length > 0) {
+        const scrollTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: itemRef.current,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        })
+        .to(charElements, {
+          opacity: 0,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        })
+        .to(charElements, {
+          opacity: 1,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        }, "-=0.15");
+
+        scrollTlRef.current = scrollTl;
+      }
+
       const handleMouseEnter = () => {
-        const charElements = textRef.current?.querySelectorAll(".char");
         if (!charElements) return;
+
+        // Kill scroll-trigger intro timeline if it's running to prevent overlap issues
+        if (scrollTlRef.current) {
+          scrollTlRef.current.kill();
+          scrollTlRef.current = null;
+        }
 
         if (tlRef.current) {
           tlRef.current.kill();
@@ -87,7 +120,6 @@ function ServiceItem({ title }: { title: string }) {
           tlRef.current = null;
         }
 
-        const charElements = textRef.current?.querySelectorAll(".char");
         if (charElements) gsap.set(charElements, { opacity: 1 });
 
         gsap.to(indicatorRef.current, {
@@ -110,6 +142,7 @@ function ServiceItem({ title }: { title: string }) {
           el.removeEventListener("mouseleave", handleMouseLeave);
         }
         if (tlRef.current) tlRef.current.kill();
+        if (scrollTlRef.current) scrollTlRef.current.kill();
       };
     },
     { scope: itemRef }
@@ -131,7 +164,7 @@ function ServiceItem({ title }: { title: string }) {
               {word.split("").map((char, cIdx) => (
                 <span
                   key={cIdx}
-                  className="char inline-block will-change-transform opacity-100"
+                  className="char inline-block will-change-transform"
                 >
                   {char}
                 </span>
@@ -152,19 +185,53 @@ function ServiceItem({ title }: { title: string }) {
 
 export default function Services() {
   const servicesRef = useRef<HTMLElement | null>(null);
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
+
+  const splitText = (text: string) => {
+    return text.split("").map((ch, i) => (
+      <span key={i} className="svc-char inline-block whitespace-pre will-change-opacity">
+        {ch === " " ? "\u00a0" : ch}
+      </span>
+    ));
+  };
 
   useGSAP(
     () => {
-      gsap.from("[data-intro-text]", {
-        duration: 1.2,
+      // Decoupled sub-heading fade and rise up
+      gsap.from("[data-about-copy]", {
+        duration: 1,
         opacity: 0,
-        y: 40,
+        y: 30,
         ease: "power3.out",
         scrollTrigger: {
           trigger: servicesRef.current,
           start: "top 80%",
         },
       });
+
+      // Main intro heading character split-text flicker animation
+      const charEls = headingRef.current?.querySelectorAll(".svc-char");
+      if (charEls && charEls.length > 0) {
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: headingRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        })
+        .to(charEls, {
+          opacity: 0,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        })
+        .to(charEls, {
+          opacity: 1,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        }, "-=0.15");
+      }
 
       gsap.from(".service-item-container", {
         duration: 1,
@@ -193,16 +260,17 @@ export default function Services() {
         {/* Intro Block - Hidden on mobile since it's merged into metrics.tsx */}
         {/* Top GridDivider — nodes align with the outer vertical lines */}
         {/* <GridDivider nodes={[0, 100]} /> */}
-        <div className="hidden md:block px-2 md:px-12 pt-7 pb-8">
-          <div data-intro-text className="md:max-w-[70%]">
+        <div className="block px-2 md:px-12 pt-7 pb-8">
+          <div className="md:max-w-[70%]">
             <p
               className="text-[12px] text-white/40 font-light tracking-[0.2em] uppercase mb-3 md:mb-6"
               data-about-copy
             >
-              What we do
+              <span className="md:hidden">What we do</span>
+              <span className="hidden md:inline">What we do</span>
             </p>
-            <h2 className="md:text-5xl text-2xl font-light  tracking-tight text-white/90">
-              We collaborate with brands across industries to create visual stories that feel purposeful, cinematic, and human.
+            <h2 ref={headingRef} className="md:text-5xl text-2xl font-light tracking-tight text-white/90">
+              {splitText("We collaborate with brands across industries to create visual stories that feel purposeful, cinematic, and human.")}
             </h2>
           </div>
         </div>

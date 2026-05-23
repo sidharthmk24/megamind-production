@@ -140,7 +140,7 @@ export default function VideoPlayer({ project }: { project: Project }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const clientRef = useRef<HTMLSpanElement>(null);
   const categoryRef = useRef<HTMLSpanElement>(null);
-  
+
 
   const { scramble: scrambleClient } = useEncryptText(project.client, clientRef);
   const { scramble: scrambleCategory } = useEncryptText(project.category, categoryRef);
@@ -162,22 +162,22 @@ export default function VideoPlayer({ project }: { project: Project }) {
   const [controlsVisible, setControlsVisible] = useState(true);
   const [smoothProgress, setSmoothProgress] = useState(0);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-const isMobile = () => window.innerWidth <= 768;
+  const isMobile = () => window.innerWidth <= 768;
   /* Auto-show / hide controls on mouse move */
- const showControls = useCallback(() => {
-  setControlsVisible(true);
-  if (isMobile()) return; // never hide on mobile
-  if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-  hideTimerRef.current = setTimeout(() => {
-    if (playing) setControlsVisible(false);
-  }, 2800);
-}, [playing]);
+  const showControls = useCallback(() => {
+    setControlsVisible(true);
+    if (isMobile()) return; // never hide on mobile
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = setTimeout(() => {
+      if (playing) setControlsVisible(false);
+    }, 2800);
+  }, [playing]);
 
-const hideControls = useCallback(() => {
-  if (isMobile()) return;
-  if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-  if (playing) setControlsVisible(false);
-}, [playing]);
+  const hideControls = useCallback(() => {
+    if (isMobile()) return;
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    if (playing) setControlsVisible(false);
+  }, [playing]);
   useEffect(() => {
     return () => {
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
@@ -269,10 +269,10 @@ const hideControls = useCallback(() => {
   const progress = smoothProgress;
   // Use JS to calculate the fraction (0 to 1) so CSS calc() works correctly
   const progressFraction = progress / 100;
-const isMobileView = typeof window !== 'undefined' && window.innerWidth <= 768;
-const activeWidthStr = isMobileView
-  ? `calc(${progressFraction} * 100%)`
-  : `calc(${progressFraction} * (100% - 10vw))`;
+  const isMobileView = typeof window !== 'undefined' && window.innerWidth <= 768;
+  const activeWidthStr = isMobileView
+    ? `calc(${progressFraction} * 100%)`
+    : `calc(${progressFraction} * (100% - 10vw))`;
   return (
     <>
       <style>{`

@@ -24,8 +24,18 @@ const Node = ({ className, style }: { className?: string; style?: React.CSSPrope
 
 export default function Metrics() {
   const metricsRef = useRef<HTMLElement | null>(null);
+  const metricsHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const metricsHeadingMobileRef = useRef<HTMLHeadingElement | null>(null);
   const [activeMetric, setActiveMetric] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const splitText = (text: string) => {
+    return text.split("").map((ch, i) => (
+      <span key={i} className="svc-char inline-block whitespace-pre will-change-opacity">
+        {ch === " " ? "\u00a0" : ch}
+      </span>
+    ));
+  };
 
   const startTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -109,6 +119,37 @@ export default function Metrics() {
           start: "top 80%",
         },
       });
+
+      // Character flicker intro animation for metrics headings
+      const desktopChars = metricsHeadingRef.current?.querySelectorAll(".svc-char");
+      const mobileChars = metricsHeadingMobileRef.current?.querySelectorAll(".svc-char");
+
+      const allMetricsChars = [
+        ...(desktopChars ? Array.from(desktopChars) : []),
+        ...(mobileChars ? Array.from(mobileChars) : []),
+      ];
+
+      if (allMetricsChars.length > 0) {
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: metricsRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        })
+        .to(allMetricsChars, {
+          opacity: 0,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        })
+        .to(allMetricsChars, {
+          opacity: 1,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        }, "-=0.15");
+      }
     },
     { scope: metricsRef }
   );
@@ -144,17 +185,13 @@ export default function Metrics() {
 
         {/* Text Section */}
         <div className="px-2 pr-6 mb-12">
-          <p className="text-[12px] text-white/40 font-light tracking-[0.2em] uppercase mb-4">
-            Who we do
+          <p className="text-[12px] text-white/40 font-light tracking-[0.2em] uppercase mb-4" data-metric-fade>
+            Why choose us
           </p>
-          <h2 className="text-[26px] leading-[1.3] font-light tracking-tight text-white/95 mb-10">
-            We collaborate with<br />
-            brands across industries<br />
-            to create visual stories<br />
-            that feel purposeful,<br />
-            cinematic, and human.
+          <h2 ref={metricsHeadingMobileRef} className="text-[26px] leading-[1.3] font-light tracking-tight text-white/95 mb-10">
+            {splitText("We combine cinematic production with commercial understanding.")}
           </h2>
-          <p className="text-[13px] leading-[1.65] text-white/70 font-light pr-2">
+          <p className="text-[13px] leading-[1.65] text-white/70 font-light pr-2" data-metric-fade>
             We work with brands across hospitality, corporate, retail, healthcare, education, and real estate, creating visual content tailored to the way each industry communicates. From premium hospitality experiences to modern business storytelling, our approach combines cinematic production with strategic brand understanding.
           </p>
         </div>
@@ -288,18 +325,17 @@ export default function Metrics() {
             26/h
           </div>
 
-          <div data-metric-fade>
+          <div>
             <p
               className="text-[12px] text-white/40 font-light tracking-[0.2em] uppercase mb-6"
-              data-about-copy
+              data-metric-fade
             >
               Why choose us
             </p>
-            <h2 className="text-[clamp(2.2rem,3.5vw,3.5rem)] font-light leading-[1.1] tracking-tight mb-10 text-white">
-              We combine cinematic production
-              with commercial understanding.
+            <h2 ref={metricsHeadingRef} className="text-[clamp(2.2rem,3.5vw,3.5rem)] font-light leading-[1.1] tracking-tight mb-10 text-white">
+              {splitText("We combine cinematic production with commercial understanding.")}
             </h2>
-            <p className="max-w-[85%] text-[14px] leading-relaxed text-[#8a8a8a] font-light">
+            <p className="max-w-[85%] text-[14px] leading-relaxed text-[#8a8a8a] font-light" data-metric-fade>
               We work with brands across hospitality, corporate, retail,
               healthcare, education, and real estate, creating visual content
               tailored to the way each industry communicates. From premium

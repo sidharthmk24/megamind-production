@@ -10,6 +10,16 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Footer() {
   const footerRef = useRef<HTMLElement | null>(null);
+  const footerHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const footerHeadingMobileRef = useRef<HTMLHeadingElement | null>(null);
+
+  const splitText = (text: string) => {
+    return text.split("").map((ch, i) => (
+      <span key={i} className="svc-char inline-block whitespace-pre will-change-opacity">
+        {ch === " " ? "\u00a0" : ch}
+      </span>
+    ));
+  };
 
   useGSAP(
     () => {
@@ -26,7 +36,36 @@ export default function Footer() {
         },
       });
 
+      // Character flicker intro animation for footer headings (Desktop & Mobile)
+      const desktopChars = footerHeadingRef.current?.querySelectorAll(".svc-char");
+      const mobileChars = footerHeadingMobileRef.current?.querySelectorAll(".svc-char");
 
+      const allFooterChars = [
+        ...(desktopChars ? Array.from(desktopChars) : []),
+        ...(mobileChars ? Array.from(mobileChars) : []),
+      ];
+
+      if (allFooterChars.length > 0) {
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        })
+        .to(allFooterChars, {
+          opacity: 0,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        })
+        .to(allFooterChars, {
+          opacity: 1,
+          duration: 0.03,
+          stagger: { amount: 0.2, from: "random" },
+          ease: "none",
+        }, "-=0.15");
+      }
     },
     { scope: footerRef }
   );
@@ -53,10 +92,12 @@ export default function Footer() {
             {/* Left Content Area */}
             <div className="flex flex-col gap-8 max-w-2xl ">
               <h2
+                ref={footerHeadingRef}
                 className="text-[40px] md:text-[56px] font-normal leading-[1.1] tracking-tight text-white"
-                data-footer-reveal
               >
-                Ready to bring your <br /> story to life?
+                {splitText("Ready to bring your")}
+                <br />
+                {splitText("story to life?")}
               </h2>
               <div data-footer-reveal>
                 <button
@@ -133,8 +174,13 @@ export default function Footer() {
       {/* ─── MOBILE VIEW ─── */}
       <div className="md:hidden w-full flex flex-col z-10 px-4 pt-16 pb-10">
         {/* Title */}
-        <h2 className="text-[2.2rem] font-light leading-[1.1] tracking-tight text-white mb-8">
-          Ready to bring your <br /> story to life?
+        <h2
+          ref={footerHeadingMobileRef}
+          className="text-[2.2rem] font-light leading-[1.1] tracking-tight text-white mb-8"
+        >
+          {splitText("Ready to bring your")}
+          <br />
+          {splitText("story to life?")}
         </h2>
 
         {/* Button */}
